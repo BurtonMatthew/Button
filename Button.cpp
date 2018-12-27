@@ -32,7 +32,8 @@ Button::Button(uint8_t buttonPin, uint8_t buttonMode){
 	pin=buttonPin;
   pinMode(pin,INPUT);
   
-	buttonMode==BUTTON_PULLDOWN ? pulldown() : pullup(buttonMode);
+  buttonMode==BUTTON_PULLDOWN ? pulldown() : pullup(buttonMode);
+  readType = buttonMode == BUTTON_PULLUP_ANALOG ? BUTTON_ANALOG : BUTTON_DIGITAL;
   state = 0;
   bitWrite(state,CURRENT,!mode);
   
@@ -70,6 +71,18 @@ void Button::pulldown(void)
 	mode=BUTTON_PULLDOWN;
 }
 
+int Button::read(void)
+{
+  if(readType == BUTTON_DIGITAL)
+  {
+    return digitalRead(pin);
+  }
+  else if(readType == BUTTON_ANALOG)
+  {
+    return analogRead(pin) > 500 ? HIGH : LOW;
+  }
+}
+
 /*
 || @description
 || | Return the bitRead(state,CURRENT) of the switch
@@ -83,7 +96,7 @@ bool Button::isPressed(void)
   bitWrite(state,PREVIOUS,bitRead(state,CURRENT));
   
   //get the current status of the pin
-  if (digitalRead(pin) == mode)
+  if (read() == mode)
   {
     //currently the button is not pressed
     bitWrite(state,CURRENT,false);

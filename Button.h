@@ -21,6 +21,9 @@
 #define BUTTON_PULLUP HIGH
 #define BUTTON_PULLUP_INTERNAL 2
 #define BUTTON_PULLDOWN LOW
+#define BUTTON_PULLUP_ANALOG 3
+#define BUTTON_ANALOG 1
+#define BUTTON_DIGITAL 0
 
 class Button;
 typedef void (*buttonEventHandler)(Button&);
@@ -33,6 +36,7 @@ class Button {
     void pullup(uint8_t buttonMode);
     void pulldown();
     
+    int read();
     bool isPressed();
     bool wasPressed();
     bool stateChanged();
@@ -56,6 +60,7 @@ class Button {
     uint8_t pin;
     uint8_t mode;
     uint8_t state;
+    uint8_t readType;
     unsigned int pressedStartTime;
     unsigned int holdEventThreshold;
     buttonEventHandler cb_onPress;
